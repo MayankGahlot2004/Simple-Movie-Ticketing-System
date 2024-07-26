@@ -1,0 +1,473 @@
+Simple Movie Ticketing System
+The Simple Movie Ticketing System is a C-based project designed to offer a user-friendly way for customers to book movie tickets. This system allows users to:
+
+View Current Movies: Displaying a list of movies currently available for booking.
+Register Details: Allowing new users to create an account by registering their personal information.
+Book Tickets: Enabling users to select movies, showtimes, and seats, and to book tickets accordingly.
+The project utilizes fundamental C programming concepts such as arrays, structures, functions, and file handling, making it a practical example for learning and understanding these concepts. This system is designed to demonstrate how C can be used to develop simple yet functional applications that address real-world problems.
+
+
+Code:
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<windows.h>
+
+
+
+int addMov();
+void dispMov();
+void findMov();
+int delMov();
+void showmovie();
+void registration();
+
+
+struct book
+{
+	int mnum;
+	char cname[30];
+	char mname[30];
+	char mdate[12];
+	int mtimehour;
+	int mtime;
+	char ttype[30];
+	int guestsnum;
+	int seatnum;
+	int fee;
+}
+;
+
+void main()
+{
+	int option;
+	registration();
+
+	do
+	{
+		system("color 30");
+		printf("\n\n--<:Main Menu:>--\n");
+		printf("\n 1. Add New Ticket Record(s)\n");
+		printf("\n 2. Display All Ticket Records\n");
+		printf("\n 3. Search Movie Ticketing Record(s)\n");
+		printf("\n 4. Delete Movie Ticketing Record(s)\n");
+		printf("\n 5. All Movies\n");
+		printf("\n 6. Quit\n");
+		printf("\nWhat is your option (1-6)? ");
+		scanf("%d", &option);
+		switch(option)
+		{
+			case 1:
+				showmovie();
+				break;
+			case 2:
+				dispMov();
+				break;
+			case 3:
+				findMov();
+				break;
+			case 4:
+				delMov();
+				break;
+			case 5:
+				showmovie();
+				break;
+			case 6:
+				printf("See you next time :)");
+				exit(0);
+				break;
+			default:
+				printf("Please select a correct number (1-7)!");
+		}
+	} while(option!=7);
+}
+
+int addMov()
+{
+	struct book b;
+	char op;
+	FILE *fp;
+	printf("Enter Movie Booking Number (XXXX): ");
+	scanf("%d",&b.mnum);
+	while(b.mnum<1||b.mnum>9999)
+	{
+		printf("Re-enter Movie Booking Number! It should be between 0001 to 9999!: ");
+		scanf("%d",&b.mnum);
+	};
+	printf("Enter Name of Customer: ");
+	gets(b.cname);
+	printf("Enter Name of Movie: ");
+	gets(b.mname);
+	printf("Enter Movie Schedule (DD-MM-YYYY): ");
+	gets(b.mdate);
+	printf("Enter Time (XXXX): ");
+	scanf("%d",&b.mtime);
+	while(b.mtime<1000||b.mtime>2300)
+	{
+		printf("Re-enetr Time! It should be in 24-hour format and between 1000 to 2300!: ");
+		scanf("%d",&b.mtime);
+	};
+	printf("Enter Number of Guests: ");
+	scanf("%d",&b.guestsnum);
+	printf("Enter Seat Number: ");
+	scanf("%d",&b.seatnum);
+	printf("Enter Ticket Type: ");
+	scanf("%s",b.ttype);
+	printf("Enter Total Fee: ");
+	scanf("%d",&b.fee);
+	fp=fopen("ticket.txt","a");
+	if(fp == NULL)
+	{
+		printf("File not found!");
+	}
+	else
+	{
+		fprintf(fp,"%d\n%s\n%s\n%s\n%d\n%d\n%d\n%s\n%d\n\n",b.mnum,b.cname,b.mname,b.mdate,b.mtime,b.guestsnum,b.seatnum,b.ttype,b.fee);
+		pay();
+		printf("Ticket booked sucessfully!");
+	}
+	printf("\n");
+	fclose(fp);
+	do
+	{
+		printf("Add another record (y/n)?");
+		scanf("%s",&op);
+		switch(op)
+		{
+			case 'y':
+				printf("\n");
+				addMov();
+			case 'n':
+				printf("\n");
+				main();
+			default:
+				printf("Please select (y) or (n)!\n");
+		}
+	} while(op!='n');
+}
+
+void dispMov()
+{
+	char ch;
+	FILE *fp;
+	printf("\n");
+	fp = fopen("ticket.txt","r");
+	if(fp == NULL)
+	{
+		printf("File not found!");
+		exit(1);
+	}
+	else
+	{
+		while((ch=fgetc(fp))!=EOF)
+		{
+			printf("%c",ch);
+		}
+	}
+	fclose(fp);
+}
+
+
+void findMov()
+{
+    char op;
+	char bk[100],line[250];
+	char bnum[250],cname[250],mname[250],mdate[250],mtime[250],guestsnum[250],seatnum[250],ttype[250],fee[250];
+	struct book b;
+	printf("Enter booking number: ");
+	scanf("%s",bk);
+	FILE *fp;
+	fp =fopen("ticket.txt","r");
+	if (fp==NULL)
+ 	{
+	    printf("File not found!");
+    }
+	else
+	{
+		while (fscanf(fp,"%s",bnum) != EOF)
+		{
+			if (strcmp(bk,bnum)==0)
+    		{
+			  	printf("\nRecord found.\n\nBooking number: %s", bnum);
+				fgets(line,250,fp); //skipping to new line
+				fgets(cname,250,fp);
+				printf("\nName: %s",cname);
+				fgets(mname,250,fp);
+			  	printf("Movie name: %s",mname);
+			    fgets(mdate,250,fp);
+			  	printf("Movie Schedule : %s", mdate);
+			  	fgets(mtime,250,fp);
+			  	printf("Time: %s",mtime);
+				fgets(guestsnum,250,fp);
+			  	printf("Number of Guests: %s",guestsnum);
+			  	fgets(seatnum,250,fp);
+				printf("House Number: %s",seatnum);
+				fgets(ttype,250,fp);
+				printf("Type: %s",ttype);
+				fgets(fee,250,fp);
+				printf("Total fee: %s",fee);
+			}
+			else
+			{
+				printf("\nRecord not found!");
+				break;
+			}
+  		}
+	}
+	do
+	{
+		printf("\nFind another record (y/n)?");
+		scanf("%s",&op);
+		switch(op)
+		{
+			case 'y':
+				printf("\n");
+				findMov();
+			case 'n':
+				printf("\n");
+				main();
+			default:
+				printf("Please select (y) or (n)!\n");
+		}
+	} while(op!='n');
+}
+
+int delMov()
+{
+	remove("ticket.txt");
+	printf("File deleted successfully");
+}
+void registration()
+{
+	char user[10],pass[10];
+	printf("\n||=======================================================================||");
+	printf("\n||                                                                       ||");
+	printf("\n||                Welcome to Moive Ticket Booking System                 ||");
+	printf("\n||                                                                       ||");
+	printf("\n||=======================================================================||");
+	printf("\nUsername: ");
+    scanf("%s",&user);
+    printf("\nPassword: ");
+    scanf("%s",&pass);
+}
+int pay()
+{
+	char op;
+	char bk[100],line[250];
+	char bnum[250],cname[250],mname[250],mdate[250],mtime[250],guestsnum[250],seatnum[250],ttype[250],fee[250];
+	struct book b;
+	int ch;
+	printf("Enter booking number: ");
+	scanf("%s",bk);
+	FILE *fp;
+	fp =fopen("ticket.txt","r");
+	if (fp==NULL)
+ 	{
+	    printf("File not found!");
+    }
+	else
+	{
+		while (fscanf(fp,"%s",bnum) != EOF)
+		{
+			if (strcmp(bk,bnum)==0)
+    		{
+			  	printf("\nRecord found.\n\nBooking number: %s", bnum);
+				fgets(line,250,fp); //skipping to new line
+				fgets(cname,250,fp);
+				printf("\nName: %s",cname);
+				fgets(mname,250,fp);
+			  	printf("Movie name: %s",mname);
+			    fgets(mdate,250,fp);
+			  	printf("Movie Schedule : %s", mdate);
+			  	fgets(mtime,250,fp);
+			  	printf("Time: %s",mtime);
+				fgets(guestsnum,250,fp);
+			  	printf("Number of Guests: %s",guestsnum);
+			  	fgets(seatnum,250,fp);
+				printf("Seat Number: %s",seatnum);
+				fgets(ttype,250,fp);
+				printf("Type: %s",ttype);
+				fgets(fee,250,fp);
+				printf("Total fee: %s",fee);
+				
+			}
+			else
+			{
+				printf("\nRecord not found!");
+				break;
+			}
+			
+  		}
+  			printf("1. Cash\n2. Online");
+				if(ch==1)
+				{
+					printf("Thank You");
+				}
+				else if(ch==2)
+				{
+					printf("Pay the amount on the given number and ask user for the screenshot\n9953XXXXXX");
+				}
+	}
+}
+
+void showmovie()
+{
+	printf("\nChoose a type of movie:\n\n");
+	int option;
+	printf("1.Action movie\n");
+	printf("2.War movie\n");
+	printf("3.Sci-fi movie\n");
+	printf("4.Horror movie\n");
+	printf("5.Animated movie\n");
+	printf("6.Back to main menu\n");
+	printf("\nWhat is your option (1-6)? ");
+	scanf("%d", &option);
+	switch(option)
+	{
+		case 1:
+			printf("\n1.The Equalizer(0100)\n");
+			printf("2.Mad Max: Fury Road(0001)\n");
+			printf("3.John Wick 3(0002)\n");
+			printf("\nBack to main menu (4)\n");
+			printf("Choose another type of movie select (5)\n");
+			scanf("%d",&option);
+			switch(option)
+			{
+				case 1:
+					printf("Price: 250 for Premium and 200 for regular\n");
+					addMov();
+				case 2:
+					printf("Price: 200 for Premium and 180 for regular\n");
+					addMov();
+				case 3:
+					printf("Price: 250 for Premium and 200 for regular\n");
+					addMov();
+				case 4:
+					printf("\n");
+					main();
+				case 5:
+					printf("\n");
+					showmovie();
+				default:
+					printf("Please select (4) or (5)!\n");
+			} while(option!=2);
+			break;
+		case 2:
+			printf("\n1.Saving Private Ryan(0003)\n");
+			printf("2.Tomorrow War(0004)\n");
+			printf("3.Braveheart(0005)\n");
+			printf("\nBack to main menu select (4)\n");
+			printf("Choose another type of movie select (5)\n");
+			scanf("%d",&option);
+			switch(option)
+			{
+				case 1:
+					printf("Price: 250 for Premium and 200 for regular\n");
+					addMov();
+				case 2:
+					printf("Price: 200 for Premium and 180 for regular\n");
+					addMov();
+				case 3:
+					printf("Price: 250 for Premium and 200 for regular\n");
+					addMov();
+				case 4:
+					printf("\n");
+					main();
+				case 5:
+					printf("\n");
+					showmovie();
+				default:
+					printf("Please select (4) or (5)!\n");
+			} while(option!=2);
+			break;
+		case 3:
+			printf("\n1.Avengers:EndGame(0006)\n");
+			printf("2.Captain Marvel(0007)\n");
+			printf("3.Spider-Man:Far From Home(0008)\n");
+			printf("\nBack to main menu select (4)\n");
+			printf("Choose another type of movie select (5)\n");
+			scanf("%d",&option);
+			switch(option)
+			{
+				case 1:
+					printf("Price: 250 for Premium and 200 for regular\n");
+					addMov();
+				case 2:
+					printf("Price: 200 for Premium and 180 for regular\n");
+					addMov();
+				case 3:
+					printf("Price: 250 for Premium and 200 for regular\n");
+					addMov();
+				case 4:
+					printf("\n");
+					main();
+				case 5:
+					printf("\n");
+					showmovie();
+				default:
+					printf("Please select (4) or (5)!\n");
+			} while(option!=2);
+			break;
+		case 4:
+			printf("\n1.IT(0009)\n");
+			printf("2.Get Out(0010)\n");
+			printf("3.The Witch(0011)\n");
+			printf("\nBack to main menu select (4)\n");
+			printf("Choose another type of movie select (5)\n");
+			scanf("%d",&option);
+			switch(option)
+			{
+				case 1:
+					printf("Price: 250 for Premium and 200 for regular\n");
+					addMov();
+				case 2:
+					printf("Price: 200 for Premium and 180 for regular\n");
+					addMov();
+				case 3:
+					printf("Price: 250 for Premium and 200 for regular\n");
+					addMov();
+				case 4:
+					printf("\n");
+					main();
+				case 5:
+					printf("\n");
+					showmovie();
+				default:
+					printf("Please select (4) or (5)!\n");
+			} while(option!=2);
+			break;
+		case 5:
+			printf("\n1.Inside Out(0012)\n");
+			printf("2.Zootopia(0013)\n");
+			printf("3.Finding Nemo(0014)\n");
+			printf("\nBack to main menu select (4)\n");
+			printf("Choose another type of movie select (5)\n");
+			scanf("%d",&option);
+			switch(option)
+			{
+				case 1:
+					printf("Price: 250 for Premium and 200 for regular\n");
+					addMov();
+				case 2:
+					printf("Price: 200 for Premium and 180 for regular\n");
+					addMov();
+				case 3:
+					printf("Price: 250 for Premium and 200 for regular\n");
+					addMov();
+				case 4:
+					printf("\n");
+					main();
+				case 5:
+					printf("\n");
+					showmovie();
+				default:
+					printf("Please select (4) or (5)!\n");	
+			} while(option!=2);
+			break;
+		case 6:
+			main();
+		default:
+			printf("Please select a correct number (1-6)!");
+	} while(option!=6);
+}
